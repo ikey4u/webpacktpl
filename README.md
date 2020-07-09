@@ -322,6 +322,55 @@
 
     比如我们这里配置了 @ 符号表示 src 目录, 那么我们在引入相关资源时就可以进行简写.
 
+# 环境变量
+
+在 webpack 4 中引入了 mode 这一配置, 我们可以在构建命令中指定开发环境和生产环境.
+
+举个例子如下
+
+    "scripts": {
+      "build": "NODE_ENV=production webpack --mode production",
+      "dev": "NODE_ENV=development webpack-dev-server --mode development"
+    },
+
+这个例子等价于
+
+    "scripts": {
+      "build": "NODE_ENV=production webpack",
+      "dev": "NODE_ENV=development webpack-dev-server"
+    },
+
+其中 `NODE_ENV` 用于设定在 webpack.config.js(构建脚本) 中的 `process.env.NODE_ENV` 变量,
+而后面的 `--mode` 则用来设定在应用程序中的 `process.env.NODE_ENV` 变量.
+
+需要注意的是, `--mode` 的值只能为 production 或者 development, 默认情况下,
+webpack 命令指定 mode 为 production 而 webpack-dev-server 则指定 mode 为
+development.
+
+如果我们需要在应用程序中定义更多环境变量, 那么可以使用 DefinePlugin,
+比如我们要加入一个 TYPE 环境变量, 在 package.json 中设置如下
+
+    "scripts": {
+        "build": "NODE_ENV=production TYPE=html webpack --mode production",
+        "dev": "NODE_ENV=development TYPE=html webpack-dev-server --mode development"
+    },
+
+
+那么可以在构建脚本中使用 process.env.TYPE 获取 TYPE 变量的值, 设置 DefinePlugin
+如下
+
+    var config = {
+      plugins: [
+        new webpack.DefinePlugin({
+          TYPE: JSON.stringify(process.env.TYPE),
+        }),
+      ],
+    };
+
+在应用程序中直接使用 TYPE 变量即可, 如
+
+    console.log('type: ', TYPE);
+
 # 参考
 
 - babel-loader: https://webpack.js.org/loaders/babel-loader/
